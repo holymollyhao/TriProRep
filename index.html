@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TriProRep — Atom-level Protein Representation Learning</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="static/style.css?v=5" />
+  <style>
+/* ===== TriProRep-specific additions ===== */
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 24px 0 28px 0;
+}
+.stat-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 16px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+.stat-card .stat-num {
+  display: block;
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.stat-card .stat-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--soft);
+  margin-top: 8px;
+  line-height: 1.4;
+}
+@media (max-width: 650px) {
+  .stat-row { grid-template-columns: 1fr; }
+  .stat-card .stat-num { font-size: 32px; }
+}
+
+.tag {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 3px;
+  background-color: #eeedec;
+  font-size: 13px;
+  font-weight: 500;
+  color: #444;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+.tag-blue {
+  background-color: #e3edff;
+  color: var(--accent);
+}
+.tag-pink {
+  background-color: #fbe4ee;
+  color: #c83d7a;
+}
+
+.news-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 6px 0;
+  font-size: 16px;
+}
+
+.tldr-box p { margin: 0 0 14px 0; }
+.tldr-box p:last-child { margin-bottom: 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- ============ HERO ============ -->
+    <section class="paper-title">
+      <h1>
+        <span class="title-main">TriProRep</span>
+        <span class="title-sub">Atom-level Protein Representation Learning Improves Protein Structure Prediction</span>
+      </h1>
+
+      <div class="author-row">
+        <a href="https://holymollyhao.github.io" target="_blank">Taewon Kim<sup>*</sup></a>,
+        <a href="https://hsjang0.github.io/hsjang/" target="_blank">Hyosoon Jang<sup>*</sup></a>,
+        <a href="https://hyunjin72.github.io" target="_blank">Hyunjin Seo</a>,
+        <a>Seonghwan Seo</a>,
+        <a>Hyeongwoo Kim</a>,
+        <a>Wonho Zhung</a>,
+        <a>Mingyeong Shin</a>,
+        <a>Wooyoun Kim</a>,
+        <a href="https://sungsoo-ahn.github.io" target="_blank">Sungsoo Ahn</a>
+      </div>
+      <div class="affiliations">
+        <sup>*</sup>Equal contribution (order is random) &nbsp;·&nbsp; KAIST
+        <br>{maxkim139, hyosoon.jang, sungsoo.ahn}@kaist.ac.kr
+      </div>
+
+      <div class="link-btn-parent">
+        <a class="link-btn" href="https://arxiv.org/abs/2605.22133" target="_blank">
+          <i class="fa-regular fa-file-lines"></i> Paper
+        </a>
+      </div>
+
+      <figure class="hero-figure">
+        <img src="assets/triprorep/fig1_overview.png" alt="TriProRep overview">
+      </figure>
+
+      <div class="stat-row">
+        <div class="stat-card">
+          <span class="stat-num">83.7M</span>
+          <span class="stat-label">predicted structures for pretraining</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">1.8M</span>
+          <span class="stat-label">homodimer complexes in RepSP</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">2.8B</span>
+          <span class="stat-label">parameters at the largest scale</span>
+        </div>
+      </div>
+
+      <div class="tldr-box">
+        <p><i><b class="highlight">Q:</b> Can pretrained protein representations serve as useful <b class="highlight">geometric signals for structure-predictive modeling?</b></i></p>
+
+        <p>
+          Protein representation models are usually judged on EC/GO function annotation —
+          tasks that don't actually test whether a representation carries the geometric signal a
+          downstream structure model could use. On those benchmarks, sequence-only models stay
+          competitive with structure-aware ones, so it's never clear whether structural supervision
+          is doing real work. This work answers the question in two pieces:
+        </p>
+
+        <p>
+          <span class="tag tag-blue">Method</span>
+          <b class="highlight">TriProRep</b>
+          is a structure-aware pretrained encoder that ties together three aligned residue-level
+          views — <b class="highlight">amino-acid identity</b>, <b class="highlight">backbone geometry</b>, and a new
+          <b class="highlight">full-atom side-chain</b> token learned with a VQ-VAE in an SE(3)-invariant frame.
+          The three views are trained jointly with an ELECTRA-style corrective objective: a small
+          generator perturbs each view, and the large encoder is forced to recover the originals.
+        </p>
+
+        <p>
+          <span class="tag tag-blue">Benchmark</span>
+          <b class="highlight">RepSP</b> is, to our knowledge, the first
+          benchmark built specifically to test representations for structure-predictive use.
+          Three tasks — homodimer flexible docking, per-residue binding-property probing,
+          and distillation into a monomer folder — all stress whether a representation
+          carries the geometry a downstream structural model can actually consume.
+        </p>
+
+        <p>
+          <span class="tag tag-pink">Findings</span>
+          <b class="highlight">TriProRep</b> wins across every RepSP
+          task and every model scale we tried. The 650M model already beats every huge baseline on
+          most flexible-docking metrics; the 2.8B model is best on nearly all of them. Distilling
+          its representations gives the fastest, highest-quality monomer folder among the encoders
+          we compared.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ NEWS ============ -->
+    <section id="news">
+      <h2>News</h2>
+      <hr>
+      <div class="news-row"><span class="tag">May 2026</span> Project page released.</div>
+    </section>
+
+    <!-- ============ METHOD ============ -->
+    <section id="method">
+      <h2>Method</h2>
+      <hr>
+
+      <h3>Three-view residue tokenization</h3>
+      <p class="textbox">
+        For each residue we define three aligned tokens. The <b class="highlight">amino-acid token</b> encodes
+        sequence identity, as in ESM2. The <b class="highlight">backbone-geometry token</b>, obtained from a
+        VQ-VAE-based tokenizer (AminoAseed), captures local backbone substructure with higher
+        codebook utilization than Foldseek 3Di. We additionally introduce a
+        <b class="highlight">full-atom-geometry token</b>: a residue-level VQ-VAE that takes heavy-atom coordinates
+        expressed in an SE(3)-invariant local frame defined by the N, Cα, and C atoms, along
+        with dihedral-angle features. This token explicitly captures intra-residue side-chain
+        rotamer geometry — information that is largely inaccessible from backbone geometry
+        alone.
+      </p>
+
+      <h3>Corrective pretraining with generator-corrupted views</h3>
+      <p class="textbox">
+        Because each residue is represented by three views, independent token replacement can
+        produce inputs that are plausible within each view but mutually inconsistent across views.
+        A small generator corrupts each view; the large representation model is trained to recover
+        the original tokens at every position, using separate token-recovery heads for the three
+        views. Recovering the originals encourages the model to enforce consistency among
+        sequence identity, backbone geometry, and residue full-atom geometry — producing a
+        stronger training signal than single-view masked language modeling.
+      </p>
+    </section>
+
+    <!-- ============ BENCHMARK ============ -->
+    <section id="benchmark">
+      <h2>RepSP: A Structure-Predictive Benchmark</h2>
+      <hr>
+
+      <p class="textbox">
+        RepSP evaluates whether protein representations improve structure prediction
+        across three complementary tasks. To the best of our knowledge, this is the first
+        benchmark to evaluate structure-aware representations for flexible-docking prediction and
+        distillation.
+      </p>
+
+      <figure>
+        <img src="assets/triprorep/fig2_repsp.png" alt="RepSP three tasks">
+        <figcaption class="caption">
+          <b>RepSP overview.</b> Three structure-generative tasks that use
+          protein representations as input. <b>Task 1:</b> homodimer structure prediction via
+          a flexible-docking model. <b>Task 2:</b> per-residue homodimer binding-property
+          prediction via MLP probing. <b>Task 3:</b> distillation into a monomer structure
+          prediction model.
+        </figcaption>
+      </figure>
+
+      <p class="textbox">
+        <span class="tag tag-blue">Task 1</span> <b class="highlight">Homodimer flexible docking.</b> A 100M
+        flexible-docking model (a SimpleFold variant) takes monomer representations as input and
+        predicts homodimer structures, evaluated with both interface metrics (DockQ, iRMSD, LRMSD,
+        Fnat) and overall metrics (TM-score, LDDT, RMSD).
+      </p>
+      <p class="textbox">
+        <span class="tag tag-blue">Task 2</span> <b class="highlight">Per-residue binding-property probing.</b>
+        Frozen monomer representations are probed with MLPs for four residue-level targets:
+        binary binding site, ΔSASA, Levy tier (5 classes), and bond type (5 interaction
+        classes).
+      </p>
+      <p class="textbox">
+        <span class="tag tag-blue">Task 3</span> <b class="highlight">Distillation for monomer structure prediction.</b>
+        Representations are used as dense alignment targets for training SimpleFold-100M, with
+        structure-prediction quality measured by TM-score, GDT-TS, GDT-HA, LDDT, LDDT<sub>bb</sub>,
+        and RMSD.
+      </p>
+    </section>
+
+    <!-- ============ RESULTS ============ -->
+    <section id="results">
+      <h2>Results</h2>
+      <hr>
+
+      <h3>TriProRep improves homodimer flexible docking at every scale</h3>
+      <p class="textbox">
+        We pretrain at four scales — 35M, 150M, 650M, and 2.8B — and compare against
+        sequence-only ESM2 and structure-aware models (SaProt, S-PLM, MIF-ST, ESM3, ProstT5).
+        Across all scales, <b class="highlight">TriProRep</b>
+        improves both interface quality and overall structural accuracy. Notably, our 650M model
+        already outperforms the huge baselines on most metrics; our 2.8B model is best on nearly
+        every metric.
+      </p>
+
+      <figure>
+        <img src="assets/triprorep/tab1_results.png" alt="Homodimer flexible-docking table">
+        <figcaption class="caption">
+          <b>Table 1: Homodimer flexible-docking performance on RepSP.</b>
+          Bold indicates the best within each size class. Flexible docking with
+          TriProRep representations outperforms
+          the baselines across all parameter scales.
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img src="assets/triprorep/fig3_scaling.png" alt="Qualitative scaling of flexible docking">
+        <figcaption class="caption">
+          <b>Scaling of flexible docking.</b> Predicted homodimer structures (chain A blue,
+          chain B gold) overlaid on ground truth (gray) across encoder sizes (150M, 650M, 3B)
+          for four test records. Larger
+          TriProRep models reliably recover the
+          correct monomer orientation; baseline predictions often misplace the interface.
+        </figcaption>
+      </figure>
+
+      <h3>TriProRep is the strongest alignment target for monomer folding</h3>
+      <p class="textbox">
+        Beyond serving as input features, representations can also act as dense alignment targets
+        for training a structure-prediction model. Distilling
+        <b class="highlight">TriProRep</b>
+        into SimpleFold-100M yields the fastest convergence and the strongest final
+        structure-prediction quality across every metric we evaluate — ahead of the no-REPA
+        baseline as well as ESM2-, SaProt-, S-PLM-, and MIF-ST-aligned variants.
+      </p>
+
+      <figure>
+        <img src="assets/triprorep/fig4_distill.png" alt="Distillation curves">
+        <figcaption class="caption">
+          <b>Acceleration of monomer structure prediction via representation alignment on
+          RepSP.</b> Each panel shows training-step vs. quality for a different
+          metric. TriProRep (blue diamonds)
+          provides the strongest alignment target across all six metrics.
+        </figcaption>
+      </figure>
+
+      <h3>Takeaways</h3>
+      <p class="textbox">
+        Two patterns emerge across the RepSP tasks. First, structure-aware models
+        broadly outperform sequence-only baselines once the evaluation actually requires geometric
+        information — making RepSP a useful proving ground for
+        structure-sensitive representation quality. Second, the gains from
+        <b class="highlight">TriProRep</b>
+        are most pronounced on interface-level metrics, which depend not only on accurate monomer
+        structures but on their relative placement — suggesting that finer geometric detail
+        in the representation is what drives complex-level reasoning.
+      </p>
+    </section>
+
+    <!-- ============ CITATION ============ -->
+    <section id="bibtex">
+      <h2>Citation</h2>
+      <hr>
+      <pre>@misc{kim2026atomlevelproteinrepresentationlearning,
+      title={Atom-level Protein Representation Learning Improves Protein Structure Prediction},
+      author={Taewon Kim and Hyosoon Jang and Hyunjin Seo and Seonghwan Seo and Hyeongwoo Kim and Wonho Zhung and Mingyeong Shin and Wooyoun Kim and Sungsoo Ahn},
+      year={2026},
+      eprint={2605.22133},
+      archivePrefix={arXiv},
+      primaryClass={q-bio.BM},
+      url={https://arxiv.org/abs/2605.22133},
+}</pre>
+    </section>
+
+  </div>
+
+  <footer>
+    Page template adapted from
+    <a href="https://dnachunker.com" target="_blank">DNAChunker</a>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+.venv/
+venv/
+.env
+.env.*
+*.ckpt
+*.pt
+*.pth
+.DS_Store
+*.log
+static/motif_fragmentation_with_caption.png
